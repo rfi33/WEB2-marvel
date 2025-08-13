@@ -11,7 +11,7 @@ router.post("/create", async (req,res) => {
     const character = req.body;
 
     try{
-        if(character.name!==null || character.realName!==null || character.universe!==null){
+        if(!character.name || !character.realName || !character.universe){
             return res.status(400).json({
                 Error : "Data of the missing charcter"
             });  
@@ -22,36 +22,56 @@ router.post("/create", async (req,res) => {
      
      res.status(201).json({
         message : "Character created successfully",
-        character: character     
+        character     
      });
     }
     catch (error) {
         res.status(500).json({
-            error : "Charcter created error"
+            error : "Error service"
         })
     }
 });
 
-router.get("/searchId/:id", async (req,res) => {
+router.get("/:id", async (req,res) => {
 
-    try{
-        const idCharacter = (req.params.id);
+      try {
+        const idCharacter = req.params.id;
 
-        if(0<=idCharacter || idCharacter==undefined){
-            res.status(400).json({
-                error:"ID character not found"
+        if (isNaN(idCharacter) || idCharacter <= 0) {
+            return res.status(400).json({
+                error: "Invalid character ID"
             });
         }
+        const character = characters.find(char => char.id === idCharacter);
+
         res.status(200).json({
-            characters,
-            message:"charcter found"
-    })
+            character
+        })
+
     }
     catch (error){
         res.status(500).json({
-            error: "Charcter not found"
+            error: "Error server"
         })
     }
 })
 
+
+router.put("/edit", async (req,res) =>{
+   const character = req.body;
+    try{
+
+    }catch(error){
+
+    }
+})
+
+router.delete("/delete", async (req,res)=>{
+    const character = req.body
+    try{
+
+    }catch(error){
+
+    }
+})
 export default router;

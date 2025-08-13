@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-const BASE_URL = '/characters.json';
+const BASE_URL = 'http://localhost:4000';
 
 
 

@@ -1,10 +1,10 @@
 import express from "express";
-import characters from "../models/characters.json" with { type: "json"};
+import charactersData from "../models/characters.json" with { type: "json"};
 
 const router = express.Router();
 
 router.get("/",(req,res) => {
-     res.status(200).json(characters);
+     res.status(200).json(charactersData);
 });
 
 router.post("/create", async (req,res) => {
@@ -16,9 +16,13 @@ router.post("/create", async (req,res) => {
                 Error : "Data of the missing charcter"
             });  
         }
-        character.id = characters.length+1
-        
-         characters.push(character);
+
+        if(isNaN(character.id) || charactersData.characters.find(char => char.id === character.id)){
+        const maxId = charactersData.characters.reduce((max, char) => Math.max(max, char.id), 0);
+        character.id = maxId + 1;
+        }
+
+       charactersData.characters.push(character)
      
      res.status(201).json({
         message : "Character created successfully",
@@ -32,17 +36,17 @@ router.post("/create", async (req,res) => {
     }
 });
 
-router.get("/:id", async (req,res) => {
+router.get("/:id", (req,res) => {
 
       try {
-        const idCharacter = req.params.id;
+        const idCharacter = parseInt(req.params.id);
 
         if (isNaN(idCharacter) || idCharacter <= 0) {
             return res.status(400).json({
                 error: "Invalid character ID"
             });
         }
-        const character = characters.find(char => char.id === idCharacter);
+        const character = charactersData.characters.find(char => char.id === idCharacter);
 
         res.status(200).json({
             character
@@ -57,7 +61,7 @@ router.get("/:id", async (req,res) => {
 })
 
 
-router.put("/edit", async (req,res) =>{
+router.put("/edit/:id", async (req,res) =>{
    const character = req.body;
     try{
 
@@ -66,12 +70,27 @@ router.put("/edit", async (req,res) =>{
     }
 })
 
-router.delete("/delete", async (req,res)=>{
-    const character = req.body
+router.delete("/delete/:id", async (req,res)=>{
     try{
+        const idCharacter = parseInt(req.params.id);
+        if(isNaN(idCharacter) || idCharacter <=0){
+            res.status(400).json({
+                error:"ID not found"
+            })
+        }
+        const characterIndex = charactersData.characters.findIndex(char => char.id == idCharacter);
+
+      const deletedCharacter = charactersData.characters.splice(characterIndex, 1)[0];
+
+        res.status(200).json({
+            message:"Character :"+idCharacter+"delete)",
+            character: deletedCharacter
+        })
 
     }catch(error){
-
+res.status(500).json({
+    error:"Error server"
+})
     }
 })
 export default router;

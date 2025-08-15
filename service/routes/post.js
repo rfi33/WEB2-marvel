@@ -60,15 +60,36 @@ router.get("/:id", (req,res) => {
     }
 })
 
+router.put("/edit/:id", async (req, res) => {
+    try {
+        const idCharacter = parseInt(req.params.id);
+        const updatedData = req.body;
 
-router.put("/edit/:id", async (req,res) =>{
-   const character = req.body;
-    try{
+        if (isNaN(idCharacter) || idCharacter <= 0 || charactersData.characters.find(char => char.id === idCharacter)) {
+            return res.status(400).json({
+                error: "ID de caractère invalide"
+            });
+        }
 
-    }catch(error){
+        const characterIndex = charactersData.characters.findIndex(char => char.id === idCharacter);
 
+
+        if (updatedData.name) charactersData.characters[characterIndex].name = updatedData.name;
+        if (updatedData.realName) charactersData.characters[characterIndex].realName = updatedData.realName;
+        if (updatedData.universe) charactersData.characters[characterIndex].universe = updatedData.universe;
+
+        res.status(200).json({
+            message: "Caractère modifié avec succès",
+            character: charactersData.characters[characterIndex]
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            error: "Erreur serveur"
+        });
     }
-})
+});
+
 
 router.delete("/delete/:id", async (req,res)=>{
     try{

@@ -93,7 +93,7 @@ router.put("/edit/:id", async (req, res) => {
         const idCharacter = parseInt(req.params.id);
         const updatedData = req.body;
 
-        if (isNaN(idCharacter) || idCharacter <= 0 || charactersData.characters.findIndex(char => char.id === idCharacter) > 0) {
+        if (isNaN(idCharacter) || idCharacter <= 0 ) {
             return res.status(400).json({
                 error: "ID de caractère invalide"
             });
@@ -101,15 +101,17 @@ router.put("/edit/:id", async (req, res) => {
 
         const characterIndex = charactersData.characters.findIndex(char => char.id === idCharacter);
 
-
-        if (updatedData.name) charactersData.characters[characterIndex].name = updatedData.name;
-        if (updatedData.realName) charactersData.characters[characterIndex].realName = updatedData.realName;
-        if (updatedData.universe) charactersData.characters[characterIndex].universe = updatedData.universe;
-
-        res.status(200).json({
-            message: "Caractère modifié avec succès",
-            character: charactersData.characters[characterIndex]
+        if (characterIndex >= 0 ) {
+            if (updatedData.name) charactersData.characters[characterIndex].name = updatedData.name;
+            if (updatedData.realName) charactersData.characters[characterIndex].realName = updatedData.realName;
+            if (updatedData.universe) charactersData.characters[characterIndex].universe = updatedData.universe;
+                    res.status(200).json({
+                          message: "Caractère modifié avec succès",
+                        character: charactersData.characters[characterIndex]
         });
+        } else {
+    res.status(400).json({ error: "ID not found" });
+}
                await writeCharactersFile(charactersData);
 
     } catch (error) {
@@ -131,7 +133,7 @@ router.delete("/delete/:id", async (req,res)=>
         }
 
         const characterIndex = charactersData.characters.findIndex(char => char.id === idCharacter);
-if (characterIndex > 0 ) {
+if (characterIndex >= 0 ) {
     const deletedCharacter = charactersData.characters.splice(characterIndex, 1);
     res.status(200).json({ message: "Character deleted", character: deletedCharacter });
 } else {

@@ -95,7 +95,7 @@ router.put("/edit/:id", async (req, res) => {
 
         if (isNaN(idCharacter) || idCharacter <= 0 ) {
             return res.status(400).json({
-                error: "ID de caractère invalide"
+                error: "ID not found"
             });
         }
 
@@ -106,7 +106,7 @@ router.put("/edit/:id", async (req, res) => {
             if (updatedData.realName) charactersData.characters[characterIndex].realName = updatedData.realName;
             if (updatedData.universe) charactersData.characters[characterIndex].universe = updatedData.universe;
                     res.status(200).json({
-                          message: "Caractère modifié avec succès",
+                          message: "Edit succes",
                         character: charactersData.characters[characterIndex]
         });
         } else {
@@ -133,7 +133,7 @@ router.delete("/delete/:id", async (req,res)=>
         }
 
         const characterIndex = charactersData.characters.findIndex(char => char.id === idCharacter);
-if (characterIndex >= 0 ) {
+if (characterIndex >=0 ) {
     const deletedCharacter = charactersData.characters.splice(characterIndex, 1);
     res.status(200).json({ message: "Character deleted", character: deletedCharacter });
 } else {

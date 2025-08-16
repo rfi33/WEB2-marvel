@@ -67,11 +67,18 @@ function App() {
    };
 
     const deleteCharacter = async (id) => {
+
+      const deleteConfirmed = window.confirm("You are sure") 
+
+if(!deleteConfirmed){
+  return true
+}
+setLoading(true);
       try {
         const response = await fetch(`${BASE_URL}/delete/${id}`, { method: 'DELETE' });
 
         if(response.ok){
-          fetchPost();
+         await fetchPost();
         }
       } catch (error) {
         console.error('Error deleting character:',error)

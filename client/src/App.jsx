@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 const BASE_URL = 'http://localhost:4000';
 
 function App() {
-   const [characters,setChacters] = useState([]);
+   const [characters,setCharacters] = useState([]);
    const [isLoading,setLoading] = useState(false);
    const [error, setError] = useState(null);
       const [newCharacter, setNewCharacter] = useState({
@@ -26,7 +26,7 @@ function App() {
         const data = await response.json();
 
         if(data.characters !== null){
-            setChacters(data.characters)
+            setCharacters(data.characters)
         }else{
           throw new Error("Unsupported data format");
           
@@ -41,7 +41,11 @@ function App() {
     };
 
        const addCharacter = async () => {
-     if (!newCharacter.name || !newCharacter.realName) return;
+     if (!newCharacter.name || !newCharacter.realName){
+    alert("Forum empty");
+      return;     
+     }
+        
 
      try {
        const response = await fetch(`${BASE_URL}/create`, {
@@ -55,7 +59,7 @@ function App() {
        if (response.ok) {
          setNewCharacter({ name: '', realName: '', universe: '' });
          setShowAddForm(false);
-         fetchPost();
+         await fetchPost();
        }
      } catch (error) {
        console.error('Error adding character:', error);
@@ -110,21 +114,21 @@ function App() {
                 type="text"
                 placeholder="Hero's Name"
                 value={newCharacter.name}
-                onChange={(e) => setNewCharacter({newCharacter, name: e.target.value})}
+                onChange={(e) => setNewCharacter({...newCharacter, name: e.target.value})}
                 className="px-3 py-2 border border-gray-300 rounded"
               />
               <input
                 type="text"
                 placeholder="Real name"
                 value={newCharacter.realName}
-                onChange={(e) => setNewCharacter({newCharacter, realName: e.target.value})}
+                onChange={(e) => setNewCharacter({...newCharacter, realName: e.target.value})}
                 className="px-3 py-2 border border-gray-300 rounded"
               />
               <input
                 type="text"
                 placeholder="Universe"
                 value={newCharacter.universe}
-                onChange={(e) => setNewCharacter({newCharacter, universe: e.target.value})}
+                onChange={(e) => setNewCharacter({...newCharacter, universe: e.target.value})}
                 className="px-3 py-2 border border-gray-300 rounded"
               />
               <div className="flex gap-2">
@@ -164,6 +168,7 @@ function App() {
         <td className="border border-gray-300 px-4 py-2">{character.name}</td>
         <td className="border border-gray-300 px-4 py-2">{character.realName}</td>
         <td className="border border-gray-300 px-4 py-2">{character.universe}</td>
+        <td>
         <div className='flex flex-col'>
         <button className='bg-blue-900 text-white p-2 border transition-opacity hover:opacity-80 duration-300'>
           Edit
@@ -172,6 +177,7 @@ function App() {
          Delete
         </button> 
         </div>
+        </td>
       </tr>
     ))}
   </tbody>
